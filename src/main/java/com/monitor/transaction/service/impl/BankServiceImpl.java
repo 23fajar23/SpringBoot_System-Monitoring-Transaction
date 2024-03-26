@@ -5,6 +5,7 @@ import com.monitor.transaction.model.entity.Customer;
 import com.monitor.transaction.model.request.BankRequest;
 import com.monitor.transaction.model.response.BankResponse;
 import com.monitor.transaction.model.response.CommonResponse;
+import com.monitor.transaction.model.response.DetailBankResponse;
 import com.monitor.transaction.repository.BankRepository;
 import com.monitor.transaction.service.BankService;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -95,11 +97,65 @@ public class BankServiceImpl implements BankService {
     }
 
     @Override
+    public ResponseEntity<?> getAll() throws SQLException {
+        List<DetailBankResponse> detailBankResponses = bankRepository.findAll()
+                .stream()
+                .map(
+                        bank -> {
+                            try {
+                                return DetailBankResponse.builder()
+                                        .idBank(bank.getId())
+                                        .service(bank.getService())
+                                        .noRekening(bank.getNoRekening())
+                                        .name(bankRepository.findCustomerById(bank.getCustomer().getId()).getName())
+                                        .build();
+                            } catch (SQLException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                )
+                .toList();
+        return toResponseEntityList("Successfully fetch bank data",HttpStatus.OK,detailBankResponses);
+    }
+
+    @Override
+    public ResponseEntity<?> getById(String id) throws SQLException {
+        Bank bank = bankRepository.findById(id);
+        if (bank == null){
+            return toResponseEntity("Bank id not found",HttpStatus.CREATED,null);
+        }
+        Customer customer = bankRepository.findCustomerById(bank.getCustomer().getId());
+
+        DetailBankResponse detailBankResponse = DetailBankResponse.builder()
+                .idBank(bank.getId())
+                .name(customer.getName())
+                .service(bank.getService())
+                .noRekening(bank.getNoRekening())
+//                .transaction()
+                .build();
+
+        return toResponseEntityList("Successfully fetch bank data",HttpStatus.OK, List.of(detailBankResponse));
+    }
+
+    @Override
     public ResponseEntity<?> toResponseEntity(String message, HttpStatus statusCode, BankResponse bankResponse) {
         CommonResponse<BankResponse> response = CommonResponse.<BankResponse>builder()
                 .message(message)
                 .statusCode(statusCode.value())
                 .data(bankResponse)
+                .build();
+
+        return ResponseEntity
+                .status(statusCode)
+                .body(response);
+    }
+
+    @Override
+    public ResponseEntity<?> toResponseEntityList(String message, HttpStatus statusCode, List<DetailBankResponse> bankResponses) {
+        CommonResponse<List<DetailBankResponse>> response = CommonResponse.<List<DetailBankResponse>>builder()
+                .message(message)
+                .statusCode(statusCode.value())
+                .data(bankResponses)
                 .build();
 
         return ResponseEntity

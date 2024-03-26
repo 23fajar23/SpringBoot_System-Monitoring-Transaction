@@ -11,8 +11,10 @@ import java.util.List;
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class BankResponse {
+public class DetailBankResponse {
+    private String idBank;
     private String name;
     private String service;
     private String noRekening;
+    private List<TransactionResponse> transaction;
 }

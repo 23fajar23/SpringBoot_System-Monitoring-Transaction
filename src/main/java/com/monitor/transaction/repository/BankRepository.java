@@ -11,6 +11,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -50,6 +52,31 @@ public class BankRepository {
 
         return null;
     }
+
+    @Transactional(rollbackOn = Exception.class)
+    public List<Bank> findAll() throws SQLException {
+
+        connection.setAutoCommit(false);
+        String query = "SELECT * FROM " + DbPath.BANK;
+
+        PreparedStatement ps = connection.prepareStatement(query);
+        ResultSet rs = ps.executeQuery();
+        List<Bank> banks = new ArrayList<>();
+        while (rs.next()){
+            Bank bank = Bank.builder()
+                    .id(rs.getString("id"))
+                    .service(rs.getString("service"))
+                    .noRekening(rs.getString("no_rekening"))
+                    .customer(findCustomerById(rs.getString("customer_id")))
+//                    .transactions()
+                    .build();
+
+            banks.add(bank);
+        }
+        connection.commit();
+        return banks;
+    }
+
 
     @Transactional(rollbackOn = Exception.class)
     public Customer findCustomerById(String id) throws SQLException {
