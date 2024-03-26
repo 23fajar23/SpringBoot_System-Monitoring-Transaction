@@ -4,6 +4,8 @@ import com.monitor.transaction.constant.DbPath;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = DbPath.CUSTOMER)
 @Getter
@@ -29,4 +31,8 @@ public class Customer {
     @OneToOne
     @JoinColumn(name = "user_credential_id")
     private UserCredential userCredential;
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.PERSIST)
+    private List<Bank> banks;
+
 }

@@ -28,7 +28,8 @@ public class SecurityConfiguration {
     }
     private static final String[] WHITE_LIST_URL = {
             "/api/auth/**",
-            "/login"
+            "/login",
+            "/**"
     };
 
     private static final String[] CUSTOMER_LIST_URL = {

@@ -5,4 +5,6 @@ public class DbPath {
     public final static String ADMIN = "m_admin";
     public final static String USER_CREDENTIAL = "m_user_credential";
     public final static String ROLE = "m_role";
+    public final static String BANK = "m_bank";
+    public final static String TRANSACTION = "t_transaction";
 }
