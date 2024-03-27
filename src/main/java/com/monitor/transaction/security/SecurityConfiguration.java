@@ -28,16 +28,17 @@ public class SecurityConfiguration {
     }
     private static final String[] WHITE_LIST_URL = {
             "/api/auth/**",
-            "/login",
-            "/**"
+            "/login"
     };
 
     private static final String[] CUSTOMER_LIST_URL = {
-            "/customer"
+            "/bank",
+            "/bank/**",
+            "/transaction"
     };
 
     private static final String[] ADMIN_LIST_URL = {
-            "/admin"
+            "/all/bank"
     };
 
     @Bean

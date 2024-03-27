@@ -12,26 +12,25 @@ import java.sql.SQLException;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = AppPath.BANK)
 public class BankController {
 
     private final BankService bankService;
-    @PostMapping
+    @PostMapping(AppPath.BANK)
     public ResponseEntity<?> create(@RequestBody BankRequest bank) throws SQLException {
         return bankService.create(bank);
     }
 
-    @PutMapping
+    @PutMapping(AppPath.BANK)
     public ResponseEntity<?> update(@RequestBody BankRequest bank) throws SQLException {
         return bankService.update(bank);
     }
 
-    @GetMapping
+    @GetMapping(AppPath.ALL + AppPath.BANK)
     public ResponseEntity<?> getAll() throws SQLException {
         return bankService.getAll();
     }
 
-    @GetMapping(AppPath.ID)
+    @GetMapping(AppPath.BANK + AppPath.ID)
     public ResponseEntity<?> getById(@PathVariable String id) throws SQLException {
         return bankService.getById(id);
     }
