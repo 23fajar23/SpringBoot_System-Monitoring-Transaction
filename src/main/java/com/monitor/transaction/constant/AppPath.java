@@ -2,6 +2,7 @@ package com.monitor.transaction.constant;
 
 public class AppPath {
     public final static String BANK = "/bank";
+    public final static String TRANSACTION = "/transaction";
     public final static String ID = "/{id}";
 
     //Authentication

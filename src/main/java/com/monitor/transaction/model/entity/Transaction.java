@@ -22,6 +22,7 @@ public class Transaction {
     private String transDate;
 
     @Column(name = "type")
+    @Enumerated(EnumType.STRING)
     private EType type;
 
     @Column(name = "description")

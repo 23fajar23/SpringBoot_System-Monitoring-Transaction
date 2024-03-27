@@ -6,8 +6,10 @@ import com.monitor.transaction.model.request.BankRequest;
 import com.monitor.transaction.model.response.BankResponse;
 import com.monitor.transaction.model.response.CommonResponse;
 import com.monitor.transaction.model.response.DetailBankResponse;
+import com.monitor.transaction.model.response.TransactionResponse;
 import com.monitor.transaction.repository.BankRepository;
 import com.monitor.transaction.service.BankService;
+import com.monitor.transaction.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,7 @@ import java.util.List;
 public class BankServiceImpl implements BankService {
 
     private final BankRepository bankRepository;
+    private final TransactionService transactionService;
 
     @Override
     public ResponseEntity<?> create(BankRequest bankRequest) throws SQLException {
@@ -40,7 +43,7 @@ public class BankServiceImpl implements BankService {
                 .customer(customer)
                 .build();
 
-        Bank newBank = bankRepository.create(data);
+        Bank newBank = bankRepository.createBank(data);
         BankResponse bankResponse = BankResponse.builder()
                 .name(customer.getName())
                 .service(newBank.getService())
@@ -56,7 +59,7 @@ public class BankServiceImpl implements BankService {
             return toResponseEntity("Failed to fetch data",HttpStatus.CREATED,null);
         }
 
-        Bank findBank = bankRepository.findById(bankRequest.getIdBank());
+        Bank findBank = bankRepository.findBankById(bankRequest.getIdBank());
 
         if (findBank == null){
             return toResponseEntity("Bank id not found",HttpStatus.CREATED,null);
@@ -70,7 +73,7 @@ public class BankServiceImpl implements BankService {
                 .customer(customer)
                 .build();
 
-        Bank updateBank = bankRepository.update(data);
+        Bank updateBank = bankRepository.updateBank(data);
         BankResponse bankResponse = BankResponse.builder()
                 .name(customer.getName())
                 .service(updateBank.getService())
@@ -98,7 +101,7 @@ public class BankServiceImpl implements BankService {
 
     @Override
     public ResponseEntity<?> getAll() throws SQLException {
-        List<DetailBankResponse> detailBankResponses = bankRepository.findAll()
+        List<DetailBankResponse> detailBankResponses = bankRepository.findAllBank()
                 .stream()
                 .map(
                         bank -> {
@@ -108,6 +111,7 @@ public class BankServiceImpl implements BankService {
                                         .service(bank.getService())
                                         .noRekening(bank.getNoRekening())
                                         .name(bankRepository.findCustomerById(bank.getCustomer().getId()).getName())
+                                        .transaction(transactionService.getTransactionByBankId(bank.getId()))
                                         .build();
                             } catch (SQLException e) {
                                 throw new RuntimeException(e);
@@ -120,7 +124,7 @@ public class BankServiceImpl implements BankService {
 
     @Override
     public ResponseEntity<?> getById(String id) throws SQLException {
-        Bank bank = bankRepository.findById(id);
+        Bank bank = bankRepository.findBankById(id);
         if (bank == null){
             return toResponseEntity("Bank id not found",HttpStatus.CREATED,null);
         }
@@ -131,7 +135,7 @@ public class BankServiceImpl implements BankService {
                 .name(customer.getName())
                 .service(bank.getService())
                 .noRekening(bank.getNoRekening())
-//                .transaction()
+                .transaction(transactionService.getTransactionByBankId(bank.getId()))
                 .build();
 
         return toResponseEntityList("Successfully fetch bank data",HttpStatus.OK, List.of(detailBankResponse));
