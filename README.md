@@ -152,7 +152,11 @@ Here are some APIs that can be accessed :
 ---
 
 ## Noted : 
-In this project, I use native queries to manage existing transaction data. You can see the original query I used in the “repository” folder in the BankRepository.java and TransactionRepository.java files.
+In this project, I use native queries to manage existing transaction data. You can see the original query I used in the “repository” folder in the BankRepository.java and TransactionRepository.java files. 
+because in this project you log in using a token, don't forget to enter your token when you want to access the API.
+
+Also you can see the tests I have done with the POSTMAN application at the following link. ✨ <br>
+https://www.postman.com/supply-technologist-42770162/workspace/test-api-monitoring-system/collection/32333114-fbed6ebd-89d4-45a4-ab35-81a42c472509?action=share&creator=32333114
 
 You can change and study the code that I have created, hopefully this project can help you. 😄🙏✨ <br>
 See you next time.. ✌✌
